@@ -26,14 +26,8 @@ def process_image(img, low_white, high_white, low_red, high_red):
 
     return white_cords, red_cords
 
-def save_screenshot(img, save_dir):
-    """Save the screenshot to the specified directory."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S%f")
-    filename = os.path.join(save_dir, f"skillcheck_{timestamp}.png")
-    cv2.imwrite(filename, img)
-
 def auto_skillcheck(toggle: bool, is_target_active: bool,
-                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: bool = None):
+                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: bool = None, slp: float = 0.0005):
     """Auto Skillcheck Function"""
 
     # Color range for white and red detection
@@ -46,7 +40,6 @@ def auto_skillcheck(toggle: bool, is_target_active: bool,
 
     # Automatically get screen dimensions
     screen_width, screen_height = pyautogui.size()
-    test_src = "test"
 
     # Center of the screen
     center_x = screen_width // 2
@@ -94,9 +87,7 @@ def auto_skillcheck(toggle: bool, is_target_active: bool,
                     intersection = red_set.intersection(white_cords_buffer)
 
                     if intersection:
-                        executor.submit(save_screenshot, img, test_src)
-
-                        sleep(0.0001)
+                        sleep(slp)
                         Controller().tap(keycode)
                         white_cords_buffer.clear()
                         sleep(1)

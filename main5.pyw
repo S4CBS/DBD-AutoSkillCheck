@@ -166,7 +166,8 @@ class DeadByDaylightScript(QMainWindow):
                                                                                 self.window_rect,
                                                                                 self.asc_monitor,
                                                                                 self.asc_keycode,
-                                                                                self.get_DoctorModeboolean()))
+                                                                                self.get_DoctorModeboolean(),
+                                                                                self.get_SleepValueDoctorMode()))
         self.asc_monitor_btn.clicked.connect(lambda x: self.__change_monitor_btn_handle("AutoSkillCheck", "monitor"))
         self.asc_std_monitor_btn.clicked.connect(lambda x: self.update_config("AutoSkillCheck", "monitor", "default"))
         #Connecting
@@ -195,6 +196,11 @@ class DeadByDaylightScript(QMainWindow):
         self.config.read(f"{os.getcwd()}\\config.ini")
         dcm = self.config.get("Doctor Mode", "value")
         return bool(dcm)
+
+    def get_SleepValueDoctorMode(self):
+        self.config.read(f"{os.getcwd()}\\config.ini")
+        slp = self.config.get("Doctor Mode", "sleepvalue")
+        return float(slp)
 
     def on_update_target_info(self, is_active, window_rect):
         # Обновляем информацию о цели на GUI
@@ -266,6 +272,7 @@ class DeadByDaylightScript(QMainWindow):
         self.config.add_section("Doctor Mode")
         self.config.set("Doctor Mode", "value", "False")  # alt_l is default keybind
         self.config.set("Doctor Mode", "keycode", "Key.home")  # alt_l is default keybind
+        self.config.set("Doctor Mode", "sleepvalue", "0.0005")  # alt_l is default keybind
         with open(f"{os.getcwd()}\\config.ini", "w") as config_file:
             self.config.write(config_file)
 
