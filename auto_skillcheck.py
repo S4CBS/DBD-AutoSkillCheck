@@ -1,10 +1,8 @@
-import os
 from typing import Union
 import numpy as np
 import cv2
 from pynput.keyboard import Controller, KeyCode
 from time import sleep
-from datetime import datetime
 from utility import Utility
 import pyautogui
 from concurrent.futures import ProcessPoolExecutor
@@ -27,7 +25,7 @@ def process_image(img, low_white, high_white, low_red, high_red):
     return white_cords, red_cords
 
 def auto_skillcheck(toggle: bool, is_target_active: bool,
-                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: bool = None, slp: float = 0.0005):
+                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: bool = None, slp: float = 0.0005, HeightWidth: tuple[int, int] = tuple['450', '450']):
     """Auto Skillcheck Function"""
 
     # Color range for white and red detection
@@ -46,8 +44,7 @@ def auto_skillcheck(toggle: bool, is_target_active: bool,
     center_y = screen_height // 2
 
     if DoctorMode:
-        capture_height = 450
-        capture_width = 450
+        capture_height, capture_width = HeightWidth
     elif not DoctorMode:
         capture_height = 90
         capture_width = 90
@@ -90,7 +87,6 @@ def auto_skillcheck(toggle: bool, is_target_active: bool,
                         sleep(slp)
                         Controller().tap(keycode)
                         white_cords_buffer.clear()
-                        sleep(1)
 
                 # Clear buffer if no red areas are detected
                 if red_cords.size == 0:

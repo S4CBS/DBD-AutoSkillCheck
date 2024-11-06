@@ -3,7 +3,7 @@ import PyQt5
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWidgets import (QTabWidget, QWidget, QLabel, QPushButton, QTextBrowser,
                              QCheckBox, QMainWindow, QApplication)
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
 from threading import Thread
 from multiprocessing import Process, Value, Array, freeze_support
 from ctypes import c_bool, c_int
@@ -104,6 +104,7 @@ class DeadByDaylightScript(QMainWindow):
 
         self.setFixedSize(520, 180)
         self.setWindowTitle("DBD Script by S4CBS")
+        self.setWindowIcon(QIcon('icon.ico'))
         self.tabs = QTabWidget(self)
         self.tabs.resize(302, 170)
         self.asc_tab = QWidget()
@@ -167,7 +168,8 @@ class DeadByDaylightScript(QMainWindow):
                                                                                 self.asc_monitor,
                                                                                 self.asc_keycode,
                                                                                 self.get_DoctorModeboolean(),
-                                                                                self.get_SleepValueDoctorMode()))
+                                                                                self.get_SleepValueDoctorMode(),
+                                                                                self.get_HeightWidth()))
         self.asc_monitor_btn.clicked.connect(lambda x: self.__change_monitor_btn_handle("AutoSkillCheck", "monitor"))
         self.asc_std_monitor_btn.clicked.connect(lambda x: self.update_config("AutoSkillCheck", "monitor", "default"))
         #Connecting
@@ -201,6 +203,12 @@ class DeadByDaylightScript(QMainWindow):
         self.config.read(f"{os.getcwd()}\\config.ini")
         slp = self.config.get("Doctor Mode", "sleepvalue")
         return float(slp)
+
+    def get_HeightWidth(self):
+        self.config.read(f"{os.getcwd()}\\config.ini")
+        height = self.config.get("Doctor Mode", "height")
+        width = self.config.get("Doctor Mode", "width")
+        return int(height), int(width)
 
     def on_update_target_info(self, is_active, window_rect):
         # Обновляем информацию о цели на GUI
@@ -272,7 +280,9 @@ class DeadByDaylightScript(QMainWindow):
         self.config.add_section("Doctor Mode")
         self.config.set("Doctor Mode", "value", "False")  # alt_l is default keybind
         self.config.set("Doctor Mode", "keycode", "Key.home")  # alt_l is default keybind
-        self.config.set("Doctor Mode", "sleepvalue", "0.0005")  # alt_l is default keybind
+        self.config.set("Doctor Mode", "sleepvalue", "0.0000008")  # alt_l is default keybind
+        self.config.set("Doctor Mode", "height", "500")  # alt_l is default keybind
+        self.config.set("Doctor Mode", "width", "500")  # alt_l is default keybind
         with open(f"{os.getcwd()}\\config.ini", "w") as config_file:
             self.config.write(config_file)
 
