@@ -167,9 +167,10 @@ class DeadByDaylightScript(QMainWindow):
                                                                                 self.window_rect,
                                                                                 self.asc_monitor,
                                                                                 self.asc_keycode,
-                                                                                self.get_DoctorModeboolean(),
+                                                                                self.get_DoctorModeInteger(),
                                                                                 self.get_SleepValueDoctorMode(),
-                                                                                self.get_HeightWidth()))
+                                                                                self.get_HeightWidth(),
+                                                                                self.get_DefaultSleep()))
         self.asc_monitor_btn.clicked.connect(lambda x: self.__change_monitor_btn_handle("AutoSkillCheck", "monitor"))
         self.asc_std_monitor_btn.clicked.connect(lambda x: self.update_config("AutoSkillCheck", "monitor", "default"))
         #Connecting
@@ -187,21 +188,26 @@ class DeadByDaylightScript(QMainWindow):
     def on_doctor_mode_checkbox_changed(self):
         if self.doctor_mode_checkbox.isChecked():
             self.log_browser.append("[+] Doctor Mode -> ON")
-            self.update_config("Doctor Mode", "value", "True")
+            self.update_config("Doctor Mode", "value", "1")
             pygame.mixer.Sound.play(self.sound_doctor_mode_on)
         else:
             self.log_browser.append("[-] Doctor Mode -> OFF")
-            self.update_config("Doctor Mode", "value", "False")
+            self.update_config("Doctor Mode", "value", "0")
             pygame.mixer.Sound.play(self.sound_doctor_mode_off)
 
-    def get_DoctorModeboolean(self):
+    def get_DoctorModeInteger(self):
         self.config.read(f"{os.getcwd()}\\config.ini")
         dcm = self.config.get("Doctor Mode", "value")
-        return bool(dcm)
+        return int(dcm)
 
     def get_SleepValueDoctorMode(self):
         self.config.read(f"{os.getcwd()}\\config.ini")
         slp = self.config.get("Doctor Mode", "sleepvalue")
+        return float(slp)
+
+    def get_DefaultSleep(self):
+        self.config.read(f"{os.getcwd()}\\config.ini")
+        slp = self.config.get("AutoSkillCheck", "sleepvalue")
         return float(slp)
 
     def get_HeightWidth(self):
@@ -275,14 +281,15 @@ class DeadByDaylightScript(QMainWindow):
         self.config.add_section("AutoSkillCheck")
         self.config.set("AutoSkillCheck", "keycode", "Key.alt_l")  # alt_l is default keybind
         self.config.set("AutoSkillCheck", "monitor", "default")
+        self.config.set("AutoSkillCheck", "sleepvalue", "0.0")
         self.config.add_section("ON/OFF AutoSkC")
         self.config.set("ON/OFF AutoSkC", "keycode", "Key.insert")  # insert is default keybind
         self.config.add_section("Doctor Mode")
-        self.config.set("Doctor Mode", "value", "False")  # alt_l is default keybind
-        self.config.set("Doctor Mode", "keycode", "Key.home")  # alt_l is default keybind
-        self.config.set("Doctor Mode", "sleepvalue", "0.0000008")  # alt_l is default keybind
-        self.config.set("Doctor Mode", "height", "500")  # alt_l is default keybind
-        self.config.set("Doctor Mode", "width", "500")  # alt_l is default keybind
+        self.config.set("Doctor Mode", "value", "0")
+        self.config.set("Doctor Mode", "keycode", "Key.home")
+        self.config.set("Doctor Mode", "sleepvalue", "0.0000008")
+        self.config.set("Doctor Mode", "height", "500")
+        self.config.set("Doctor Mode", "width", "500")
         with open(f"{os.getcwd()}\\config.ini", "w") as config_file:
             self.config.write(config_file)
 
@@ -307,6 +314,8 @@ class DeadByDaylightScript(QMainWindow):
             self.__change_btn_name(self.asc_keybind_btn_, self.on_off_keycode)
             # Doctor Mode
             self.on_off_keycode_doctor_mode = self.__read_keycode(self.config.get("Doctor Mode", "keycode"))
+            if self.get_DoctorModeInteger() == 1:
+                self.doctor_mode_checkbox.setChecked(True)
             self.log_browser.append("[+] Config loaded!")
         except:
             self.log_browser.append("[WARN] Config is uncorrect! Loading the standard settings file...")

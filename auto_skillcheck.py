@@ -25,7 +25,7 @@ def process_image(img, low_white, high_white, low_red, high_red):
     return white_cords, red_cords
 
 def auto_skillcheck(toggle: bool, is_target_active: bool,
-                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: bool = None, slp: float = 0.0005, HeightWidth: tuple[int, int] = tuple['450', '450']):
+                    window_rect: list, sct_monitor: Union[dict, str], keycode: object = KeyCode(0x43), DoctorMode: int = 0, slp: float = 0.0005, HeightWidth: tuple[int, int] = tuple['450', '450'], defSlep: float = 0.0):
     """Auto Skillcheck Function"""
 
     # Color range for white and red detection
@@ -43,11 +43,12 @@ def auto_skillcheck(toggle: bool, is_target_active: bool,
     center_x = screen_width // 2
     center_y = screen_height // 2
 
-    if DoctorMode:
+    if DoctorMode == 1:
         capture_height, capture_width = HeightWidth
-    elif not DoctorMode:
-        capture_height = 90
-        capture_width = 90
+    elif DoctorMode == 0:
+        slp = defSlep
+        capture_height = 100
+        capture_width = 100
 
     # Calculate top and left positions
     top = center_y - (capture_height // 2)
