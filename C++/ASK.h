@@ -70,7 +70,7 @@ void process_template_matching(cv::Mat& img, const cv::Mat& templ, cv::Mat& matc
     cv::minMaxLoc(result, &minval, &maxval, &minloc, &maxloc);
 
     // Рисуем прямоугольник вокруг найденного региона
-    cv::rectangle(img, minloc, cv::Point(minloc.x + templ.cols, minloc.y + templ.rows), cv::Scalar(0, 255, 0), 2);
+    // cv::rectangle(img, minloc, cv::Point(minloc.x + templ.cols, minloc.y + templ.rows), cv::Scalar(0, 255, 0), 2);
 
     // Проверка на допустимые координаты для создания ROI
     if (minloc.x >= 0 && minloc.y >= 0 &&
@@ -78,8 +78,8 @@ void process_template_matching(cv::Mat& img, const cv::Mat& templ, cv::Mat& matc
         minloc.y + templ.rows <= img.rows) {
         // Сохраняем найденный регион
         matchRegion = img(cv::Rect(minloc.x, minloc.y, templ.cols, templ.rows));
-        cv::imshow("img", img);
-        cv::waitKey(1);
+        // cv::imshow("img", img);
+        // cv::waitKey(1);
     }
     else {
         std::cerr << "Error: Invalid ROI dimensions!" << std::endl;
@@ -95,7 +95,7 @@ void capture_and_process_async(std::atomic<bool>& toggle, int top, int left, int
     }
 }
 void auto_skillcheck(std::atomic<bool>& toggle, std::atomic<bool>& is_target_active, const std::vector<int>& window_rect, const std::variant<std::string, std::map<std::string, int>>& sct_monitor, int& keycode,
-    std::atomic<bool>& DoctorMode, int& slp, int& DcOgr, int& DefOgr, int& DCwhiteOgrMin, int& DCwhiteOgrMax, int& DefwhiteOgrMin, int& DefwhiteOgrMax, int& DefredOgr) {
+    std::atomic<bool>& DoctorMode, int& slp, int& DcOgr, int& DefOgr, int& DCwhiteOgrMin, int& DCwhiteOgrMax, int& DefwhiteOgrMin, int& DefwhiteOgrMax, int& DefredOgr, bool& DebugWhiteValue, bool& DebugRedValue) {
 
     cv::Mat templ = cv::imread("template.jpg");
     cv::Scalar low_white(250, 250, 250), high_white(255, 255, 255);
@@ -137,6 +137,13 @@ void auto_skillcheck(std::atomic<bool>& toggle, std::atomic<bool>& is_target_act
 
             // Получаем обработанные данные
             auto [white_cords, red_cords] = async_process.get();
+
+            if (white_cords.size() > 0 && DebugWhiteValue) {
+                std::cout << white_cords.size() << std::endl;
+            }
+            if (red_cords.size() > 0 && DebugRedValue) {
+                std::cout << red_cords.size() << std::endl;
+            }
 
             // Буферизация белых точек
             if (white_cords.size() > (DoctorMode ? DCwhiteOgrMin : DefwhiteOgrMin) &&

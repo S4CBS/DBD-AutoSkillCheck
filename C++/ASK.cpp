@@ -28,6 +28,8 @@ int DCwhiteOgrMax;
 int DefwhiteOgrMin;
 int DefwhiteOgrMax;
 int DefredOgr;
+bool DebugRedValue;
+bool DebugWhiteValue;
 void create_default_config(const std::string& filename) {
     std::ofstream file(filename);
     file << "; Задержка в миллисекундах для цикла авто-чека\n";
@@ -56,6 +58,8 @@ void create_default_config(const std::string& filename) {
     file << "DefwhiteOgrMin = 5\n";
     file << "DefwhiteOgrMax = 600\n";
     file << "DefredOgr = 50\n";
+    file << "DebugRedValue = false\n";
+    file << "DebugWhiteValue = false\n";
     file.close();
     std::cout << "Файл config.ini создан с настройками по умолчанию.\n";
 }
@@ -124,6 +128,12 @@ void load_config(const std::string& filename) {
                 else if (key == "DefredOgr") {
                     DefredOgr = std::stoi(value);
                 }
+                else if (key == "DebugRedValue") {
+                    DebugRedValue = (value == "true");
+                }
+                else if (key == "DebugWhiteValue") {
+                    DebugWhiteValue = (value == "true");
+                }
             }
         }
     }
@@ -131,7 +141,7 @@ void load_config(const std::string& filename) {
 void auto_skillcheck_wrapper() {
     while (toggle) {
         auto_skillcheck(toggle, is_target_active, window_rect, monitor, keycode, DoctorMode, slp, DcOgr, DefOgr, DCwhiteOgrMin, DCwhiteOgrMax, DefwhiteOgrMin, DefwhiteOgrMax,
-            DefredOgr);
+            DefredOgr, DebugWhiteValue, DebugRedValue);
         Sleep(50);
     }
 }
