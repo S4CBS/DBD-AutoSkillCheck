@@ -17,7 +17,9 @@
 - Смена игровой клавиши в конфиге.
 
 # Telegram
-- [@Koelioncode](https://t.me/KoelionCode) - To buy utility for dbd
+- [@Koelioncode](https://t.me/KoelionCode) - To buy utility for dbd. [Написав сюда вы сможете купить утилиту для накрутки вещей]
+# Discord
+- s4cbs
 
 # Статус
 - В разработке...
